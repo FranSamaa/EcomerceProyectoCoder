@@ -46,7 +46,7 @@ def base(request):
 
 
 
-
+@staff_member_required
 def crear_producto(request):
 
     # post
@@ -75,7 +75,7 @@ def crear_producto(request):
 
         return render(request,"comercioApp/crear_producto.html",{"form":formularioVacio})
     
-
+@staff_member_required
 def crear_empleado(request):
 
     # post
@@ -133,7 +133,7 @@ def crear_cliente(request):
 
         return render(request,"comercioApp/crear_cliente.html",{"form":formularioVacio})
     
-    
+@staff_member_required  
 def buscar_producto(request):
         if request.method == "POST":
             
@@ -144,14 +144,14 @@ def buscar_producto(request):
             productos = [] #Curso.objects.all()
         return render(request,"comercioApp/busqueda_producto.html",{"productos":productos})
       
-      
+@staff_member_required      
 def ver_producto(request, producto_id):
 
   producto = Productos.objects.get(id=producto_id)
   
   return render(request,"comercioApp/verProducto.html",{"producto":producto})
 
-
+@staff_member_required
 def editar_producto(request,producto_id):
 
     producto = Productos.objects.get(id=producto_id)
@@ -177,7 +177,7 @@ def editar_producto(request,producto_id):
 
     return render(request,"comercioApp/editar_producto.html",{"form":formulario})
 
-
+@staff_member_required
 def eliminar_producto(request,producto_id):
 
     producto = Productos.objects.get(id=producto_id)
@@ -186,7 +186,7 @@ def eliminar_producto(request,producto_id):
 
     return redirect("productos")
 
-
+@staff_member_required
 def editar_empleado(request,empleado_id):
 
     empleado = Empleados.objects.get(id=empleado_id)
@@ -211,8 +211,9 @@ def editar_empleado(request,empleado_id):
 
     return render(request,"comercioApp/editar_empleado.html",{"form":formulario})
 
-
+@staff_member_required
 def eliminar_empleado(request,empleado_id):
+
 
     empleado = Empleados.objects.get(id=empleado_id)
 
@@ -220,7 +221,9 @@ def eliminar_empleado(request,empleado_id):
 
     return redirect("empleados")
 
+@staff_member_required
 def editar_cliente(request,cliente_id):
+
 
     cliente = Clientes.objects.get(id=cliente_id)
 
@@ -244,7 +247,9 @@ def editar_cliente(request,cliente_id):
 
     return render(request,"comercioApp/editar_cliente.html",{"form":formulario})
 
+@staff_member_required
 def eliminar_cliente(request,cliente_id):
+
 
 
     cliente = Clientes.objects.get(id=cliente_id)
@@ -253,7 +258,9 @@ def eliminar_cliente(request,cliente_id):
 
     return redirect("clientes")
 
+@staff_member_required
 def login_request(request):
+
 
     if request.method == "POST":
 
@@ -277,6 +284,7 @@ def login_request(request):
 
     return render(request,"comercioApp/login.html",{"form":form})
 
+@staff_member_required
 def register_request(request):
 
     if request.method == "POST":
@@ -306,6 +314,61 @@ def register_request(request):
 
     return render(request,"comercioApp/register.html",{"form":form})
 
+@staff_member_required
 def logout_request(request):
+
     logout(request)
     return redirect("inicio")
+
+@login_required
+def editar_perfil(request):
+
+    user = request.user # usuario con el que estamos loggueados
+
+    if request.method == "POST":
+       
+        form = UserEditForm(request.POST) # cargamos datos llenados
+
+        if form.is_valid():
+
+            info = form.cleaned_data
+            user.email = info["email"]
+            user.first_name = info["first_name"]
+            user.last_name = info["last_name"]
+            
+            user.save()
+
+            return redirect("inicio")
+
+
+    else:
+        form = UserEditForm(initial={"email":user.email, "first_name":user.first_name, "last_name":user.last_name})
+
+    return render(request,"comercioApp/editar_perfil.html",{"form":form})
+
+@login_required
+def agregar_avatar(request):
+
+    if request.method == "POST":
+
+        form = AvatarForm(request.POST, request.FILES)
+
+        if form.is_valid():
+
+            user = User.objects.get(username=request.user.username) # usuario con el que estamos loggueados
+
+            avatar = Avatar(usuario=user, imagen=form.cleaned_data["imagen"])
+
+            avatar.save()
+
+            # avatar = Avatar()
+            # avatar.usuario = request.user
+            # avatar.imagen = form.cleaned_data["imagen"]
+            # avatar.save()
+
+            return redirect("inicio")
+
+    else:
+        form = AvatarForm()
+
+    return render(request,"comercioApp/agregar_avatar.html",{"form":form}) 
