@@ -1,23 +1,38 @@
-{% extends 'comercioApp/base.html' %}
-{% load static %}
+{% extends 'comercioApp/base.html' %} {% load static %}
 
-{% block tituloPagina %}
-Editar Perfil - celushop
-{% endblock %}
+<!---->
+{% block tituloPagina %} Editar Perfil - celushop {% endblock %}
 
+<!---->
 {% block contenidoPagina %}
 
 <section class="bg-light py-5">
-    <div class="container px-5">
-        <h1>Editar Perfil</h1>
-        <br>
-        <h5>Estás editando al usuario "{{user.username}}":</h5>
-        <br>
-        <form action="" method="post">
-            {% csrf_token %}
-            {{form.as_p}}
-            <button type="submit">Guardar</button>
-        </form>
+  <div class="container px-5">
+    <h1 class="text-dark" style="font-weight: bolder">Editar Perfil</h1>
+    <br />
+    <div class="d-flex align-items-center">
+      <h2>{{user.username}}</h2>
+      {% if user.avatar.imagen.url %}
+      <img
+        class="ms-3 rounded"
+        src="{{ user.avatar.imagen.url }}"
+        alt=""
+        srcset=""
+        style="height: 100px"
+      />
+      {% else %}
+      <i class="ms-3 bi bi-person-circle text-light my-2"></i>
+      {% endif %}
     </div>
+
+    <br />
+    <form action="" method="post">
+      {% csrf_token %} {{form.as_p}}
+      <button class="btn btn-dark" type="submit">Guardar</button>
+      <a class="btn btn-success" href="{%url 'agregar_avatar'%}"
+        >Cambiar avatar</a
+      >
+    </form>
+  </div>
 </section>
 {% endblock %}

@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -102,14 +101,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# ruta a media
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+LOGIN_URL = '/ComercioApp/login'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-LOGIN_URL = '/ComercioApp/login'
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'

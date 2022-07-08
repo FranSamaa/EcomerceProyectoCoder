@@ -23,8 +23,10 @@ class NuevoCliente(forms.Form):
     apellido = forms.CharField(max_length=30,label="Apellido:")
     email = forms.CharField(max_length=30,label="Email:")
 
-class UserEditForm(UserCreationForm):
 
+
+
+class UserEditForm(UserCreationForm):
     email = forms.EmailField(label="Email")
     password1 = forms.CharField(label="Contraseña", widget=forms.PasswordInput, required=False) # la contraseña no se vea
     password2 = forms.CharField(label="Confirmar contraseña", widget=forms.PasswordInput, required=False)
@@ -37,7 +39,7 @@ class UserEditForm(UserCreationForm):
         fields = ['email', 'password1', 'password2', 'first_name', 'last_name']
 
         help_texts = {k:"" for k in fields}
-
+        
 class AvatarForm(forms.Form):
 
     imagen = forms.ImageField(label="Imagen", required=False)
@@ -45,3 +47,8 @@ class AvatarForm(forms.Form):
     class Meta:
         model = Avatar
         fields = ['imagen']
+        
+        
+        
+class FormularioComentario(forms.Form):
+    body= forms.CharField(max_length=255)

@@ -104,7 +104,7 @@ def crear_empleado(request):
 
         return render(request,"comercioApp/crear_empleado.html",{"form":formularioVacio})
     
-    
+@staff_member_required
 def crear_cliente(request):
 
     # post
@@ -133,7 +133,7 @@ def crear_cliente(request):
 
         return render(request,"comercioApp/crear_cliente.html",{"form":formularioVacio})
     
-@staff_member_required  
+    
 def buscar_producto(request):
         if request.method == "POST":
             
@@ -144,7 +144,7 @@ def buscar_producto(request):
             productos = [] #Curso.objects.all()
         return render(request,"comercioApp/busqueda_producto.html",{"productos":productos})
       
-@staff_member_required      
+      
 def ver_producto(request, producto_id):
 
   producto = Productos.objects.get(id=producto_id)
@@ -214,7 +214,6 @@ def editar_empleado(request,empleado_id):
 @staff_member_required
 def eliminar_empleado(request,empleado_id):
 
-
     empleado = Empleados.objects.get(id=empleado_id)
 
     empleado.delete()
@@ -223,7 +222,6 @@ def eliminar_empleado(request,empleado_id):
 
 @staff_member_required
 def editar_cliente(request,cliente_id):
-
 
     cliente = Clientes.objects.get(id=cliente_id)
 
@@ -251,16 +249,14 @@ def editar_cliente(request,cliente_id):
 def eliminar_cliente(request,cliente_id):
 
 
-
     cliente = Clientes.objects.get(id=cliente_id)
 
     cliente.delete()
 
     return redirect("clientes")
 
-@staff_member_required
-def login_request(request):
 
+def login_request(request):
 
     if request.method == "POST":
 
@@ -284,7 +280,6 @@ def login_request(request):
 
     return render(request,"comercioApp/login.html",{"form":form})
 
-@staff_member_required
 def register_request(request):
 
     if request.method == "POST":
@@ -314,20 +309,19 @@ def register_request(request):
 
     return render(request,"comercioApp/register.html",{"form":form})
 
-@staff_member_required
 def logout_request(request):
-
     logout(request)
     return redirect("inicio")
-
+  
+  
 @login_required
 def editar_perfil(request):
 
-    user = request.user # usuario con el que estamos loggueados
+    user = request.user 
 
     if request.method == "POST":
-       
-        form = UserEditForm(request.POST) # cargamos datos llenados
+        
+        form = UserEditForm(request.POST) 
 
         if form.is_valid():
 
@@ -335,7 +329,7 @@ def editar_perfil(request):
             user.email = info["email"]
             user.first_name = info["first_name"]
             user.last_name = info["last_name"]
-            
+
             user.save()
 
             return redirect("inicio")
@@ -345,30 +339,46 @@ def editar_perfil(request):
         form = UserEditForm(initial={"email":user.email, "first_name":user.first_name, "last_name":user.last_name})
 
     return render(request,"comercioApp/editar_perfil.html",{"form":form})
-
+  
+  
 @login_required
 def agregar_avatar(request):
-
+    
     if request.method == "POST":
-
+            
         form = AvatarForm(request.POST, request.FILES)
 
         if form.is_valid():
 
-            user = User.objects.get(username=request.user.username) # usuario con el que estamos loggueados
+            user = User.objects.get(username=request.user.username) 
 
             avatar = Avatar(usuario=user, imagen=form.cleaned_data["imagen"])
 
             avatar.save()
 
-            # avatar = Avatar()
-            # avatar.usuario = request.user
-            # avatar.imagen = form.cleaned_data["imagen"]
-            # avatar.save()
 
             return redirect("inicio")
 
     else:
         form = AvatarForm()
+    
+    return render(request,"productos",{"form":form})
 
-    return render(request,"comercioApp/agregar_avatar.html",{"form":form}) 
+@login_required
+def agregar_comentario(request,producto_id):
+    user = request.user
+    producto = Productos.objects.get(id=producto_id)
+    if request.method == "POST":
+      formulario = FormularioComentario(request.POST)
+      if formulario.is_valid():
+        info = formulario.cleaned_data
+      
+      comentario = Comentario(autor=user,producto=producto,body=info["body"])
+      comentario.save()
+      return redirect("comercioApp/verProducto.html")
+    else:
+      form = FormularioComentario()
+      return render(request,"comercioApp/agregar_comentario.html",{"form":form})
+    
+    
+    # 
