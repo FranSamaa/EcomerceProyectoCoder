@@ -34,5 +34,3 @@ class Avatar(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
 
     imagen = models.ImageField(upload_to='avatar/', blank=True, null=True)
-
-#hola = Avatar.objects.get(usuario=1)
